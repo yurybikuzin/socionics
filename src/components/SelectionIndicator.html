@@ -1,0 +1,28 @@
+<!-- {#if hasSelection} -->
+<div><a on:click='$set({cognitiveProcess: null, typeName: null, sex: null})' href={url} class:visibility="hasSelection">Убрать желтый цвет со страницы</a></div>
+<!-- {/if} -->
+
+<script>
+  import {store, urlQuery} from '../store.js';
+  export default {
+    store: () => store,
+    computed: {
+      hasSelection: ({ $cognitiveProcess, $typeName }) => $cognitiveProcess || $typeName,
+      url: ({ segment }) => '/' + segment,
+    }
+  };
+</script>
+
+<style>
+.visibility {
+  visibility: visible;
+}
+div {
+  position: sticky;
+  text-align: center;
+  visibility: hidden;
+}
+a {
+  background-color: yellow;
+}
+</style>

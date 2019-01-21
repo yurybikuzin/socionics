@@ -1,0 +1,68 @@
+<h1>{$typeName}</h1>
+<nav>
+  <ul>
+    <li><a class:selected='$sex != "female"' href='{url({sex: null, typeName: $typeName})}'>Мужской портрет</a></li>
+    <li><a class:selected='$sex === "female"' href='{url({sex: "female", typeName: $typeName})}'>Женский портрет</a></li>
+  </ul>
+</nav>
+{#if $sex === "female"}
+  female
+{:else}
+  male
+{/if}
+
+<script>
+  import {store, urlQuery} from '../store.js';
+  export default {
+    store: () => store,
+    helpers: {
+      url: ({typeName, sex}) => 'tn' + urlQuery({typeName, sex}),
+    },
+  };
+</script>
+
+<style>
+  nav {
+    border-bottom: 1px solid rgba(170,30,30,0.1);
+    font-weight: 300;
+    padding: 0 1em;
+  }
+
+  nav ul {
+    margin: 0;
+    padding: 0;
+  }
+
+  /* clearfix */
+  nav ul::after {
+    content: '';
+    display: block;
+    clear: both;
+  }
+
+  nav li {
+    display: block;
+    float: left;
+  }
+
+  nav .selected {
+    position: relative;
+    display: inline-block;
+  }
+
+  nav .selected::after {
+    position: absolute;
+    content: '';
+    width: calc(100% - 1em);
+    height: 2px;
+    background-color: rgb(170,30,30);
+    display: block;
+    bottom: -1px;
+  }
+
+  nav a {
+    text-decoration: none;
+    padding: 1em 0.5em;
+    display: block;
+  }
+</style>

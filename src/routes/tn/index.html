@@ -1,0 +1,61 @@
+<svelte:head>
+  <title>Соционические типы</title>
+</svelte:head>
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+        <table class="table">
+<!--           <thead>
+            <colgroup>
+              <col class="group">
+              <col class="icon">
+              <col class="name">
+            </colgroup>
+          </thead>
+ -->
+           <tbody>
+            <tr>
+              <td></td>
+              <th><ModelAQuadraHead quadra="I"/></th>
+              <th><ModelAQuadraHead quadra="II"/></th>
+              <th><ModelAQuadraHead quadra="III"/></th>
+              <th><ModelAQuadraHead quadra="IV"/></th>
+            </tr>
+            <tr>
+              <td>Экстраверты иррационалы</td>
+              <td><ModelAForType typeName="ENTP"></td>
+              <td><ModelAForType typeName="ESTP"></td>
+              <td><ModelAForType typeName="ESFP"></td>
+              <td><ModelAForType typeName="ENFP"></td>
+            </tr>
+          </tbody>
+
+        </table>
+      </td>
+{#if $typeName}
+      <td><TypeDescription/></td>
+{/if}
+    </tr>
+  </tbody>
+</table>
+
+<script>
+  import {store, urlQuery} from '../../store.js';
+  export default {
+    store: () => store,
+    helpers: {
+      url: ({typeName, sex}) => 'tn' + urlQuery({typeName, sex}),
+    },
+    components: {
+      TypeDescription: '../../components/TypeDescription.html',
+    }
+  };
+</script>
+
+<style>
+  .table .selected { background-color: yellow }
+
+</style>
+

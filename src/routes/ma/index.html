@@ -1,0 +1,57 @@
+<svelte:head>
+  <title>Модель А</title>
+</svelte:head>
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+        <table class="table">
+          <thead>
+            <colgroup>
+              <col class="group">
+              <col class="icon">
+              <col class="name">
+            </colgroup>
+          </thead>
+          <tbody>
+            <tr>
+              <td>I квадра</td>
+              <td>экстраверт</td>
+              <td>интраверт</td>
+            </tr>
+            <tr>
+              <td>иррационалы</td>
+              <td><a
+                class:selected='$typeName === "ENTP"'
+                on:click='$set({typeName: "ENTP"})'
+                href='{url({typeName: "ENTP"})}'
+              >Дон-Кихот</a></td>
+              <td>Дюма</td>
+            </tr>
+          </tbody>
+        </table>
+      </td>
+{#if $typeName}
+      <td><TypeDescription/></td>
+{/if}
+    </tr>
+  </tbody>
+</table>
+
+<style>
+  .selected { background-color: yellow }
+</style>
+
+<script>
+  import {store, urlQuery} from '../../store.js';
+  export default {
+    store: () => store,
+    helpers: {
+      url: ({cognitiveProcess}) => 'cp' + urlQuery({cognitiveProcess}),
+    },
+    components: {
+      TypeDescription: '../../components/TypeDescription.html',
+    }
+  };
+ </script>

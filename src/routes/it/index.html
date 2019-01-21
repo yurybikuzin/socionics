@@ -1,0 +1,38 @@
+<svelte:head>
+  <title>Интертипные отношения</title>
+</svelte:head>
+
+<table>
+  <thead>
+    <colgroup>
+      <col class="group">
+      <col class="icon">
+      <col class="name">
+    </colgroup>
+  </thead>
+  <tbody>
+    <tr>
+      <td rowspan="2">интуиция</td>
+      <td>иконка</td>
+      <td><a
+        class:selected='$cognitiveProcess === "Ne"'
+        on:click='$set({cognitiveProcess: "Ne"})'
+        href='{url({cognitiveProcess: "Ne"})}'
+      >интуиция возможностей</a></td>
+    </tr>
+  </tbody>
+</table>
+
+<style>
+  .selected { background-color: yellow }
+</style>
+
+<script>
+  import {store, urlQuery} from '../../store.js';
+  export default {
+    store: () => store,
+    helpers: {
+      url: ({cognitiveProcess}) => 'cp' + urlQuery({cognitiveProcess}),
+    },
+  };
+ </script>
