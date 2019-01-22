@@ -28,29 +28,29 @@
     padding: 0 1em;
   }
 
-  nav ul {
+  ul {
     margin: 0;
     padding: 0;
   }
 
   /* clearfix */
-  nav ul::after {
+  ul::after {
     content: '';
     display: block;
     clear: both;
   }
 
-  nav li {
+  li {
     display: block;
     float: left;
   }
 
-  nav .selected {
+  .selected {
     position: relative;
     display: inline-block;
   }
 
-  nav .selected::after {
+  .selected::after {
     position: absolute;
     content: '';
     width: calc(100% - 1em);
@@ -60,7 +60,7 @@
     bottom: -1px;
   }
 
-  nav a {
+  a {
     text-decoration: none;
     padding: 1em 0.5em;
     display: block;

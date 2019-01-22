@@ -6,28 +6,21 @@
   <tbody>
     <tr>
       <td>
-        <table class="table">
-          <thead>
-            <colgroup>
-              <col class="group">
-              <col class="icon">
-              <col class="name">
-            </colgroup>
-          </thead>
-          <tbody>
+        <table>
+           <tbody>
             <tr>
-              <td>I квадра</td>
-              <td>экстраверт</td>
-              <td>интраверт</td>
+              <td></td>
+              <th><ModelAQuadraHead quadra="I"/></th>
+              <th><ModelAQuadraHead quadra="II"/></th>
+              <th><ModelAQuadraHead quadra="III"/></th>
+              <th><ModelAQuadraHead quadra="IV"/></th>
             </tr>
             <tr>
-              <td>иррационалы</td>
-              <td><a
-                class:selected='$typeName === "ENTP"'
-                on:click='$set({typeName: "ENTP"})'
-                href='{url({typeName: "ENTP"})}'
-              >Дон-Кихот</a></td>
-              <td>Дюма</td>
+              <td>Экстраверты иррационалы</td>
+              <td class="ModelAForType"><ModelAForType typeName="ENTP"/></td>
+              <td class="ModelAForType"><ModelAForType typeName="ESTP"/></td>
+              <td class="ModelAForType"><ModelAForType typeName="ESFP"/></td>
+              <td class="ModelAForType"><ModelAForType typeName="ENFP"/></td>
             </tr>
           </tbody>
         </table>
@@ -39,10 +32,6 @@
   </tbody>
 </table>
 
-<style>
-  .selected { background-color: yellow }
-</style>
-
 <script>
   import {store, urlQuery} from '../../store.js';
   export default {
@@ -52,6 +41,18 @@
     },
     components: {
       TypeDescription: '../../components/TypeDescription.html',
+      ModelAQuadraHead: '../../components/ModelAQuadraHead.html',
+      ModelAForType: '../../components/ModelAForType.html',
     }
   };
  </script>
+
+<style>
+  .selected { background-color: yellow }
+  table { font-size: 12px; }
+  .ModelAForType {
+    width: 94px;
+    padding: 10px 5px 8px;
+  }
+</style>
+
