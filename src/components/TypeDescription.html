@@ -1,8 +1,8 @@
-<h1>{$typeName}</h1>
+<h1>{$tn}</h1>
 <nav>
   <ul>
-    <li><a class:selected='$sex != "female"' href='{url({sex: null, typeName: $typeName})}'>Мужской портрет</a></li>
-    <li><a class:selected='$sex === "female"' href='{url({sex: "female", typeName: $typeName})}'>Женский портрет</a></li>
+    <li><a class:selected='$sex != "female"' href='{url({sex: null, tn: $tn})}'>Мужской портрет</a></li>
+    <li><a class:selected='$sex === "female"' href='{url({sex: "female", tn: $tn})}'>Женский портрет</a></li>
   </ul>
 </nav>
 {#if $sex === "female"}
@@ -16,7 +16,7 @@
   export default {
     store: () => store,
     helpers: {
-      url: ({typeName, sex}) => 'tn' + urlQuery({typeName, sex}),
+      url: ({tn, sex}) => 'tn' + urlQuery({tn, sex}),
     },
   };
 </script>

@@ -15,9 +15,9 @@
       <td rowspan="2">интуиция</td>
       <td>иконка</td>
       <td><a
-        class:selected='$cognitiveProcess === "Ne"'
-        on:click='$set({cognitiveProcess: "Ne"})'
-        href='{url({cognitiveProcess: "Ne"})}'
+        class:selected='$cp === "Ne"'
+        on:click='$set({cp: "Ne"})'
+        href='{url({cp: "Ne"})}'
       >интуиция возможностей</a></td>
     </tr>
   </tbody>
@@ -32,7 +32,7 @@
   export default {
     store: () => store,
     helpers: {
-      url: ({cognitiveProcess}) => 'cp' + urlQuery({cognitiveProcess}),
+      url: ({cp}) => 'cp' + urlQuery({cp}),
     },
   };
  </script>

@@ -1,0 +1,53 @@
+
+<table>
+  <thead>
+    <colgroup>
+      <col class="group"/>
+      <col class="icon"/>
+      <col class="name"/>
+    </colgroup>
+  </thead>
+  <tbody>
+    {#each cpGroups as cpGroup}
+    {#each eiEnum as ei, eiIdx}
+    <tr>
+      {#if eiIdx === 0}
+      <td rowspan="2">{cpGroupTitle(cpGroup)}</td>
+      {/if}
+      <td><CognitiveProcessIcon cp='{fld(cpGroup, ei, "code")}'/></td>
+      <td><a
+        class:selected='$cp === fld(cpGroup, ei, "code")'
+        on:click='$set({cp: fld(cpGroup, ei, "code")})'
+        href='{url({cp: fld(cpGroup, ei, "code")})}'
+      >{fld(cpGroup, ei, "title")}</a></td>
+    </tr>
+    {/each}
+    {/each}
+  </tbody>
+</table>
+
+<style>
+  .selected { background-color: yellow }
+</style>
+
+<script>
+  import {store, url, eiDef, cpDef} from '../store.js';
+  export default {
+    store: () => store,
+    data() {
+      return {
+        cpGroups: Object.keys(cpDef),
+        eiEnum: Object.keys(eiDef),
+      };
+    },
+    helpers: {
+      url,
+      cpGroupTitle: (cpGroup) => cpDef[cpGroup].title,
+      fld: (cpGroup, ei, field) => cpDef[cpGroup][ei][field]
+      // url: ({cp}) => 'cp' + urlQuery({cp}),
+    },
+    components: {
+      CognitiveProcessIcon: './CognitiveProcessIcon.html'
+    },
+  };
+ </script>

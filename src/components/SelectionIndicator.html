@@ -1,5 +1,5 @@
 <!-- {#if hasSelection} -->
-<div><a on:click='$set({cognitiveProcess: null, typeName: null, sex: null})' href={url} class:visibility="hasSelection">Убрать желтый цвет со страницы</a></div>
+<div><a on:click='$set({cp: null, tn: null, sex: null})' href={url} class:visibility="hasSelection">Убрать желтый цвет со страницы</a></div>
 <!-- {/if} -->
 
 <script>
@@ -7,7 +7,7 @@
   export default {
     store: () => store,
     computed: {
-      hasSelection: ({ $cognitiveProcess, $typeName }) => $cognitiveProcess || $typeName,
+      hasSelection: ({ $cp, $tn }) => $cp || $tn,
       url: ({ segment }) => '/' + segment,
     }
   };

@@ -1,0 +1,48 @@
+<table>
+  <colgroup>
+    <col/>
+    <col/>
+  </colgroup>
+  <tbody>
+    {#each itEnum as it}
+    <tr>
+      {#if $tn}
+      <td>
+        {tnTitle($tn)} - {tnTitle(getItTn(it, $tn)) }
+        <!-- {tnTitle($tn)} - {getItTn(it, $tn)} -->
+      </td>
+      {/if}
+      <td><a
+        class:selected='$it === it'
+        on:click='$set({it})'
+        href='{url({it})}'
+      >{itTitle(it, $tn)}</a></td>
+    </tr>
+    {/each}
+  </tbody>
+</table>
+
+<style>
+  .selected { background-color: yellow }
+</style>
+
+<script>
+  import {store, url, itDef, tnDef, getItTn} from '../store.js';
+  export default {
+    store: () => store,
+    data() {
+      return {
+        itEnum: Object.keys(itDef),
+      };
+    },
+    helpers: {
+      getItTn,
+      url,
+      itTitle: (it, tn) => typeof itDef[it].title != "function" ? itDef[it].title : itDef[it].title(tn) ,
+      tnTitle: (tn) => tnDef[tn].title,
+    },
+    // components: {
+    //   'CognitiveProcessIcon': './CognitiveProcessIcon.html'
+    // },
+  };
+ </script>

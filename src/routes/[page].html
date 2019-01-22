@@ -1,0 +1,126 @@
+
+<div
+  class="selectionIndicator"
+  class:visibility="hasSelection"
+  ><a
+    on:click='$set({cp: null, tn: null, sex: null})'
+    href='{url({cp: null, tn: null, sex: null})}'
+  >Убрать желтый цвет со страницы</a
+></div>
+
+<nav>
+  <ul>
+  {#each pages as page}
+    <li>
+      <a class:selected="$page === page" href='{url({page})}'>{pageTitle(page)}</a>
+    </li>
+  {/each}
+  </ul>
+</nav>
+
+<svelte:head>
+  <title>{pageTitle($page)}</title>
+</svelte:head>
+
+<svelte:component this='{pageComponent($page)}'/>
+
+<script>
+  import Page_tn from '../components/Page_tn.html'
+  import Page_cp from '../components/Page_cp.html'
+  import Page_it from '../components/Page_it.html'
+  import Page_ma from '../components/Page_ma.html'
+  const pages = {
+    'tn': { title: 'Соционические типы', component: Page_tn },
+    'cp': { title: 'Соционические функции', component: Page_cp },
+    'it': { title: 'Интертипные отношения', component: Page_it },
+    'ma': { title: 'Модель А', component: Page_ma },
+  };
+  import {store, url} from '../store.js';
+  export default {
+    data() {
+      return {
+        pages: Object.keys(pages),
+      }
+    },
+    helpers: {
+      url,
+      pageTitle: (page) => pages[page].title,
+      pageComponent: (page) => pages[page].component,
+    },
+    store: () => store,
+    preload({ params, query }) {
+      const { page } = params;
+      const { tn, cp, sex } = query;
+      store.set({ page, tn, cp, sex })
+    },
+    computed: {
+      hasSelection: ({ $cp, $tn }) => $cp || $tn,
+    },
+  };
+</script>
+
+<style>
+
+/* ==== selectionIndicator */
+
+  .selectionIndicator {
+    position: sticky;
+    text-align: center;
+    visibility: hidden;
+  }
+
+  .selectionIndicator.visibility {
+    visibility: visible;
+  }
+
+  .selectionIndicator a {
+    background-color: yellow;
+  }
+
+/* ==== nav */
+
+  nav {
+    border-bottom: 1px solid rgba(170,30,30,0.1);
+    font-weight: 300;
+    padding: 0 1em;
+  }
+
+  nav ul {
+    margin: 0;
+    padding: 0;
+  }
+
+  /* clearfix */
+  nav ul::after {
+    content: '';
+    display: block;
+    clear: both;
+  }
+
+  nav li {
+    display: block;
+    float: left;
+  }
+
+  nav .selected {
+    position: relative;
+    display: inline-block;
+  }
+
+  nav .selected::after {
+    position: absolute;
+    content: '';
+    width: calc(100% - 1em);
+    height: 2px;
+    background-color: rgb(170,30,30);
+    display: block;
+    bottom: -1px;
+  }
+
+  nav a {
+    text-decoration: none;
+    padding: 1em 0.5em;
+    display: block;
+  }
+
+</style>

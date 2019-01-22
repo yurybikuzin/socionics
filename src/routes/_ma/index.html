@@ -17,15 +17,15 @@
             </tr>
             <tr>
               <td>Экстраверты иррационалы</td>
-              <td class="ModelAForType"><ModelAForType typeName="ENTP"/></td>
-              <td class="ModelAForType"><ModelAForType typeName="ESTP"/></td>
-              <td class="ModelAForType"><ModelAForType typeName="ESFP"/></td>
-              <td class="ModelAForType"><ModelAForType typeName="ENFP"/></td>
+              <td class="ModelAForType"><ModelAForType tn="ENTP"/></td>
+              <td class="ModelAForType"><ModelAForType tn="ESTP"/></td>
+              <td class="ModelAForType"><ModelAForType tn="ESFP"/></td>
+              <td class="ModelAForType"><ModelAForType tn="ENFP"/></td>
             </tr>
           </tbody>
         </table>
       </td>
-{#if $typeName}
+{#if $tn}
       <td><TypeDescription/></td>
 {/if}
     </tr>
@@ -37,7 +37,7 @@
   export default {
     store: () => store,
     helpers: {
-      url: ({cognitiveProcess}) => 'cp' + urlQuery({cognitiveProcess}),
+      url: ({cp}) => 'cp' + urlQuery({cp}),
     },
     components: {
       TypeDescription: '../../components/TypeDescription.html',

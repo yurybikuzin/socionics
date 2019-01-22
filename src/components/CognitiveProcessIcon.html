@@ -1,0 +1,61 @@
+<a
+  class='icon {cp}'
+  title='{titlePrefix}{title(cp)}'
+  href='{url({cp})}'
+> </a>
+
+<script>
+  import {store, url} from '../store.js';
+  export default {
+    store: () => store,
+    helpers: {
+      title: (cp) => ({
+        'Ne': 'интуиция возможностей',
+        'Ni': 'интуиция времени',
+        'Se': 'волевая сенсорика',
+        'Si': 'сенсорика ощущений',
+        'Te': 'деловая логика',
+        'Ti': 'структурная логика',
+        'Fe': 'этика эмоций',
+        'Fi': 'этика отношений',
+      }[cp]),
+      url: ({cp}) => url({cp}),
+    },
+    // computed: {
+      // query: ({$cp, $tn, $sex}) => urlQuery({}),
+    // },
+  };
+</script>
+
+<style>
+.icon {
+  display: block;
+  height: 15px;
+  width: 15px;
+  background-image: url(http://socionics.baza-winner.ru/IEPFTRLS.gif);
+}
+.Ne { /* Эстравертная интуиция, (I)ntueor, Интуиция возможностей */
+  background-position: -0px top;
+}
+.Ni { /* Интровертная интуиция, (T)empus, Интуиция времени */
+  background-position: -60px top;
+}
+.Se { /* Экстравертная сенсорика, (F)actor, Силовая сенсорика */
+  background-position: -45px top;
+}
+.Si { /* Интровертная сенсорика, (S)ensus, Сенсорика комфорта */
+  background-position: -105px top;
+}
+.Te { /* Экстравертная логика, (P)rofiteor, Деловая логика */
+  background-position: -30px top;
+}
+.Ti { /* Интровертная логика, (L)ogos, Структурная логика */
+  background-position: -90px top;
+}
+.Fe { /* Экстравертная этика, (E)moveo, Этика эмоций */
+  background-position: -15px top;
+}
+.Fi { /* Интровертная этика, (R)elatio, Этика отношений */
+  background-position: -75px top;
+}
+</style>

@@ -1,7 +1,7 @@
-<svelte:head>
+<!-- <svelte:head>
   <title>Соционические типы</title>
 </svelte:head>
-
+ -->
 <table>
   <tbody>
     <tr>
@@ -23,16 +23,16 @@
             <tr>
               <td>иррационалы</td>
               <td><a
-                class:selected='$typeName === "ENTP"'
-                on:click='$set({typeName: "ENTP"})'
-                href='{url({typeName: "ENTP"})}'
+                class:selected='$tn === "ENTP"'
+                on:click='$set({tn: "ENTP"})'
+                href='{url({tn: "ENTP"})}'
               >Дон-Кихот</a></td>
               <td>Дюма</td>
             </tr>
           </tbody>
         </table>
       </td>
-{#if $typeName}
+{#if $tn}
       <td><TypeDescription/></td>
 {/if}
     </tr>
@@ -44,7 +44,7 @@
   export default {
     store: () => store,
     helpers: {
-      url: ({typeName, sex}) => 'tn' + urlQuery({typeName, sex}),
+      url: ({tn, sex}) => 'tn' + urlQuery({tn, sex}),
     },
     components: {
       TypeDescription: '../../components/TypeDescription.html',

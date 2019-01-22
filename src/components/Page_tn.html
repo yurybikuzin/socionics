@@ -1,0 +1,71 @@
+<table>
+  <tbody>
+    <tr>
+      <td>
+
+        <table class="table">
+          <thead>
+            <colgroup>
+              <col class="group">
+              <col class="icon">
+              <col class="name">
+            </colgroup>
+          </thead>
+          <tbody>
+          {#each quadras as quadra}
+            <tr>
+              <td>{quadra} квадра</td>
+              {#each Object.entries(pjDef) as [pj, pjTitle]}
+                <td>{pjTitle}</td>
+              {/each}
+            </tr>
+
+            {#each Object.entries(pjDef) as [pj, pjTitle]}
+              <tr>
+                <td>{pjTitle}</td>
+                {#each Object.entries(eiDef) as [ei, eiTitle]}
+                <td><a
+                  class:selected='$tn === fld(quadra, pj, ei, "code")'
+                  on:click='$set({tn: fld(quadra, pj, ei, "code")})'
+                  href='{url({tn: fld(quadra, pj, ei, "code")})}'
+                >{fld(quadra, pj, ei, "title")}</a></td>
+                {/each}
+              </tr>
+            {/each}
+          {/each}
+          </tbody>
+        </table>
+
+      </td>
+<!-- {#if $tn}
+      <td><TypeDescription/></td>
+{/if}
+ -->
+</tr>
+  </tbody>
+</table>
+
+<script>
+  import {store, url, eiDef, pjDef, typeTableDef} from '../store.js';
+  export default {
+    store: () => store,
+    data() {
+      return {
+        eiDef,
+        pjDef,
+        quadras: Object.keys(typeTableDef),
+      };
+    },
+    helpers: {
+      fld: (quadra, pj, ei, field) => typeTableDef[quadra][pj][ei][field],
+      url,
+    },
+    // components: {
+    //   TypeDescription: '../../components/TypeDescription.html',
+    // }
+  };
+</script>
+
+<style>
+  .selected { background-color: yellow }
+</style>
