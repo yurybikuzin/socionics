@@ -1,0 +1,108 @@
+<table class="a1">
+  <colgroup>
+    <col style="width: 90px">
+    <col style="width: 80px">
+    <col style="width: 80px">
+  </colgroup>
+  <tbody>
+  {#each quadraEnum as quadra}
+    <tr>
+      <td class="a2">{quadra} квадра</td>
+      {#each eiEnum as ei, eiIdx}
+        <td class="a3">{eiTitle(ei)}</td>
+      {/each}
+    </tr>
+
+    {#each pjEnum as pj}
+      <tr>
+        <td class="a4">{pjTitle(pj)}</td>
+        {#each eiEnum as ei}
+        <td class="a5">
+          {#if $tn === code(quadra, pj, ei)}
+            <span class="selected">
+              {quadraField(quadra, pj, ei, "title")}
+            </span>
+          {:else}
+            <a
+              on:click='$set({tn: code(quadra, pj, ei), mad: "tn"})'
+              href='{url({tn: code(quadra, pj, ei), mad: "tn", $page, $cp, $it, $sex, $mad})}'
+              title='{code(quadra, pj, ei)} {$tn}'
+            >{quadraField(quadra, pj, ei, "title")}</a>
+          {/if}
+        </td>
+        {/each}
+      </tr>
+    {/each}
+  {/each}
+  </tbody>
+</table>
+
+<script>
+  import {
+    store,
+    url,
+    eiEnum,
+    eiTitle,
+    pjEnum,
+    pjTitle,
+    quadraEnum,
+    quadraField,
+  } from '../store.js';
+  export default {
+    store: () => store,
+    data() {
+      return {
+        eiEnum,
+        pjEnum,
+        quadraEnum,
+      };
+    },
+    helpers: {
+      pjTitle,
+      eiTitle,
+      url,
+      quadraField,
+      code: (quadra, pj, ei) => quadraField(quadra, pj, ei, "code"),
+    },
+  };
+</script>
+
+<style>
+.selected {
+  background-color: yellow;
+  color: black;
+  font-weight: bold;
+  padding: 2px 4px;
+  margin-left: -4px;
+}
+
+.a1 {
+  margin: 0px 18px 14px;
+}
+
+.a2 {
+  font-size: 15px;
+  font-weight: bold;
+  padding-top: 10px;
+}
+
+.a3 {
+  text-align: left;
+  font-size: 9px;
+  vertical-align: bottom;
+}
+
+.a4 {
+  text-align: left;
+  font-size: 9px;
+  padding: 6px 0 0 20px;
+}
+
+.a5 {
+  padding: 3px 0px;
+}
+
+.a5 * {
+  word-spacing: nowrap;
+}
+</style>

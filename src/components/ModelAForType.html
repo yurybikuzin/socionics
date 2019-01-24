@@ -1,58 +1,142 @@
-<!-- ModelAForType {tn} -->
-<h4>
-  <a href="">Дон Кихот</a>
+<h4 class="a71">
+  {#if $tn == tn}
+    <span class="a72">{tnTitle(tn)}</span>
+  {:else}
+    <a
+      on:click='$set({tn, mad: "tn"})'
+      href='{url({tn, mad: "tn", $page, $cp, $it, $sex, $mad})}'
+    >{tnTitle(tn)}</a>
+  {/if}
+  {#if $tn}
+    {#if itFor($tn, tn) == $it}
+      <div
+        class="a76 a77"
+        title="{itTitle(itFor($tn, tn))}"
+      >{itFor($tn, tn)}</div>
+    {:else}
+      <a
+        class="a76"
+        on:click='$set({it: itFor($tn, tn), mad: "it"})'
+        href='{url({it: itFor($tn, tn), mad: "it", $page, $tn, $cp, $it, $sex, $mad})}'
+        title="{itTitle(itFor($tn, tn))}"
+      >{itFor($tn, tn)}</a>
+    {/if}
+  {/if}
 </h4>
-<table>
+<table class="a70">
   <tbody>
-    <tr>
+  {#each afDef as afRow, afRowIdx}
+    <tr
+      class:a73="afRowIdx == 2"
+    >
+    {#each afRow as afCell, afCellIdx}
       <td>
-        <Icon cp="Ne" titlePrefix="базовая функция (1): "/>
+        <Icon
+          class="row{afRowIdx} cell{afCellIdx}"
+          cp="{afCp(afRowIdx, afCellIdx, tn)}"
+          titlePrefix="{afCell.title}: "
+        />
       </td>
-      <td>
-        <Icon cp="Ti" titlePrefix="творческая функция (2): "/>
-      </td>
+    {/each}
     </tr>
-    <tr>
-      <td></td>
-      <td></td>
-    </tr>
-    <tr>
-      <td></td>
-      <td></td>
-    </tr>
-    <tr>
-      <td></td>
-      <td></td>
-    </tr>
+  {/each}
   </tbody>
 </table>
 
 <script>
-  import {store, urlQuery} from '../store.js';
+  import {store, url, tnTitle, afDef, afCp, itFor, itTitle} from '../store.js';
   export default {
     store: () => store,
-
-    // computed: {
-      // query: ({$cp, $tn, $sex}) => urlQuery({}),
-    // },
+    data() {
+      return {
+        afDef,
+      };
+    },
+    helpers: {
+      url,
+      tnTitle,
+      afCp,
+      itTitle,
+      itFor,
+    },
     components: {
-      Icon: './CognitiveProcessIcon.html',
+      Icon: './CpIcon.html',
     }
-
   };
 </script>
 
 <style>
-h4 {
-  margin: 0;
-  padding: 0;
-  margin-left: 5px;
-  margin-bottom: 5px;
-  position: relative;
-  font-size: 100%;
-  font-weight: normal;
-  white-space: nowrap;
-}
+/*
+
+MainPackage->c['Модель А для одного типа']
+
+  a70 => ${table}
+  a71 => ${caption}
+  a72 => ${selected caption}
+  a73 => ${Граница витального кольца}
+  a74 => ${selected "Значок соционической функции"}
+
+*/
+
+  .a70 {
+    border: 1px silver solid;
+  }
+
+    .a70 td {
+      padding: 3px;
+    }
+
+  .a71 {
+    margin-bottom: 5px;
+    position: relative;
+  }
+
+    .a71 span {
+      margin-bottom: 5px;
+      font-weight: bold;
+      color: black;
+    }
+
+  .a72 {
+    background-color: yellow;
+    padding: 2px 4px 2px 3px;
+    margin-left: -3px;
+  }
+
+  .a73 {
+    border-top: 1px dotted silver;
+  }
+
+/*  .a74 {
+    background-color: yellow;
+  }
+*/
+/*
+
+MainPackage->c['Значок интертипных отношений']
+
+  a76 => ${Интертипные отношения}
+  a77 => ${selected}
+
+*/
+
+  .a76 {
+    position: absolute;
+    top: -4px;
+    left: -20px;
+    width: 14px;
+    text-align: center;
+    font-weight: normal;
+    vertical-align: super;
+    font-size: 9px;
+    border: 1px solid silver;
+    text-decoration: none;
+  }
+
+  .a77 {
+    background-color: yellow; color: black;
+  }
+
 </style>
 
 

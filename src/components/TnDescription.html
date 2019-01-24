@@ -1,0 +1,110 @@
+<div class="a8">
+  <h1 class="a9">{tnTitle($tn)}</h1>
+  <div class="a12">
+    <div class="a14">
+      {#each sexEnum as sex}
+        {#if sex == $sex}
+          <span>{sexTitle(sex)}</span>
+        {:else}
+          <a
+            on:click='$set({sex})'
+            href='{url({sex, $page, $tn, $cp, $it, $sex, $mad})}'
+          >{sexTitle(sex)}</a>
+        {/if}
+      {/each}
+    </div>
+
+    <p>
+      {@html desc}
+    </p>
+  </div>
+</div>
+
+<script>
+  import {
+    store,
+    url,
+    sexEnum,
+    sexTitle,
+    tnTitle,
+  } from '../store.js';
+  export default {
+    store: () => store,
+    data: () => ({
+      sexEnum,
+    }),
+    helpers: {
+      url,
+      tnTitle,
+      sexTitle,
+    },
+    computed: {
+      desc: ({$tnDesc}) => $tnDesc,
+    },
+  };
+</script>
+
+<style>
+/*
+
+MainPackage->c['Описание соционического типа']
+
+  a8 => ${}
+  a9 => ${caption}
+  a10 => ${Источник}
+
+*/
+
+  .a8 {
+    padding: 0px 40px 5px;
+    margin-top: 10px;
+    min-width: 200px;
+    max-width: 600px;
+    min-height: 100px;
+    color: #555;
+    line-height: 16px;
+    white-space: normal;
+  }
+
+  .a9 {
+    font-size: 16pt;
+    margin: 20px 0 18px -2px;
+  }
+
+  /*.a10 {}*/
+
+/*
+
+MainPackage->c['Гендерный портрет соционического типа']
+
+  a12 => ${}
+  a13 => ${=example}
+  a14 => ${sex}
+
+*/
+
+.a12 {
+  max-width: 600px;
+}
+
+  .a12 :global(p) {
+    margin: 10px 0;
+  }
+
+:global(p).a13 {
+  padding: 5px 30px 5px 40px;
+  margin-top: 0;
+  margin-bottom: 0;
+  background-color: #FFFFE0;
+}
+
+.a14 :global(*) {
+  margin-right: 6px;
+}
+
+.a14 :global(span) {
+  font-weight: bold;
+  color: black;
+}
+
+</style>

@@ -1,28 +1,38 @@
+<svelte:head>
+  <title>{pageTitle($page)}</title>
+</svelte:head>
 
 <div
   class="selectionIndicator"
   class:visibility="hasSelection"
   ><a
-    on:click='$set({cp: null, tn: null, sex: null})'
-    href='{url({cp: null, tn: null, sex: null})}'
-  >Убрать желтый цвет со страницы</a
+    on:click='$set(clearParams)'
+    href='{url(clearParams)}'
+  >убрать желтый цвет со страницы</a
 ></div>
 
-<nav>
-  <ul>
-  {#each pages as page}
-    <li>
-      <a class:selected="$page === page" href='{url({page})}'>{pageTitle(page)}</a>
-    </li>
-  {/each}
-  </ul>
-</nav>
-
-<svelte:head>
-  <title>{pageTitle($page)}</title>
-</svelte:head>
-
-<svelte:component this='{pageComponent($page)}'/>
+<table class="b1">
+  <thead>
+    <tr>
+      <td>
+      {#each pages as page}
+        {#if $page === page}
+          <span class="b3 b2">{pageTitle(page)}</span>
+        {:else}
+          <a
+            class="b2 b4"
+            on:click="$set({page})"
+            href='{url({page, $page, $tn, $cp, $it, $sex, $mad})}'
+          >{pageTitle(page)}</a>
+        {/if}
+      {/each}
+      </td>
+    </tr>
+  </thead>
+  <tbody><tr><td>
+    <svelte:component this='{pageComponent($page)}'/>
+  </td></tr></tbody>
+</table>
 
 <script>
   import Page_tn from '../components/Page_tn.html'
@@ -33,13 +43,16 @@
     'tn': { title: 'Соционические типы', component: Page_tn },
     'cp': { title: 'Соционические функции', component: Page_cp },
     'it': { title: 'Интертипные отношения', component: Page_it },
-    'ma': { title: 'Модель А', component: Page_ma },
+    'ma': { title: 'Модель А для всех типов', component: Page_ma },
   };
-  import {store, url} from '../store.js';
+  import {store, initStore, clearParams, url, onStoreChange} from '../store.js';
+  let listener;
   export default {
     data() {
       return {
         pages: Object.keys(pages),
+        clearParams,
+        // nullParams: {cp: null, tn: null, it: null, sex: null},
       }
     },
     helpers: {
@@ -49,12 +62,16 @@
     },
     store: () => store,
     preload({ params, query }) {
-      const { page } = params;
-      const { tn, cp, sex } = query;
-      store.set({ page, tn, cp, sex })
+      initStore({params, query})
     },
     computed: {
-      hasSelection: ({ $cp, $tn }) => $cp || $tn,
+      hasSelection: ({ $cp, $tn, $it }) => $cp || $tn || $it,
+    },
+    oncreate() {
+      const listener = this.store.on('state', (arg) => {
+        onStoreChange(arg)
+      });
+      this.on('destroy', listener.cancel);
     },
   };
 </script>
@@ -63,64 +80,139 @@
 
 /* ==== selectionIndicator */
 
-  .selectionIndicator {
-    position: sticky;
-    text-align: center;
-    visibility: hidden;
+.selectionIndicator {
+  margin: 0;
+  visibility: hidden;
+  text-align: center;
+}
+
+.selectionIndicator.visibility {
+  visibility: visible;
+}
+
+.selectionIndicator a {
+  background-color: yellow;
+  font-weight: bold;
+  padding: 2px 8px;
+}
+
+/* ==== table */
+
+table {
+  min-width: 600px;
+  margin: 15px 0 10px 30px;
+  color: #888;
+  font-family: Tahoma, Verdana, sans-serif;
+  font-size: 12px;
+}
+
+/*
+
+CommonPackage->c['PageControl']
+
+  b1 => ${table}
+  b2 => ${tab}
+  b3 => ${selected}
+  b4 => ${to-be-selected}
+  b5 => ${свернуто}
+  b6 => ${свернуть}
+
+*/
+
+.b1 > thead {
+    height: 20px;
   }
 
-  .selectionIndicator.visibility {
-    visibility: visible;
+  .b1 > thead > tr > td {
+    vertical-align: bottom;
   }
 
-  .selectionIndicator a {
-    background-color: yellow;
+  .b1 > tbody > tr > td {
+    border: 1px solid #DDD;
+    -moz-border-radius: 20px;
   }
 
+  .b2 {
+    position: relative;
+    top: -4px;
+    padding: 4px 6px;
+    margin-left: -1px;
+    border: 1px solid #DDD;
+    border-bottom: none;
+    -moz-border-radius: 10px 10px 0 0;
+  }
+
+  .b3 {
+    top: -6px;
+    color: black;
+    font-weight: bold;
+    background-color: white;
+    padding-top: 7px;
+    padding-bottom: 7px;
+  }
+
+  .b4 {}
+
+/*  .b5 > thead > tr > td > a,
+  .b5 > thead > tr > td > span,
+  .b5 > tbody > tr > td
+  {
+    border: none;
+  }
+*/
+/*  .b1 > thead > tr > td > a.b6 {
+    position: relative;
+    top: -12px;
+    left: 4px;
+    font-size: 9px;
+    margin-left: 3px;
+    text-decoration: none;
+    border: none;
+  }
+*/
 /* ==== nav */
 
-  nav {
-    border-bottom: 1px solid rgba(170,30,30,0.1);
-    font-weight: 300;
-    padding: 0 1em;
-  }
+/*nav {
+  border-bottom: 1px solid rgba(170,30,30,0.1);
+  font-weight: 300;
+  padding: 0 1em;
+}
 
-  nav ul {
-    margin: 0;
-    padding: 0;
-  }
+nav ul {
+  margin: 0;
+  padding: 0;
+}
 
-  /* clearfix */
-  nav ul::after {
-    content: '';
-    display: block;
-    clear: both;
-  }
+nav ul::after {
+  content: '';
+  display: block;
+  clear: both;
+}
 
-  nav li {
-    display: block;
-    float: left;
-  }
+nav li {
+  display: block;
+  float: left;
+}
 
-  nav .selected {
-    position: relative;
-    display: inline-block;
-  }
+nav .selected {
+  position: relative;
+  display: inline-block;
+}
 
-  nav .selected::after {
-    position: absolute;
-    content: '';
-    width: calc(100% - 1em);
-    height: 2px;
-    background-color: rgb(170,30,30);
-    display: block;
-    bottom: -1px;
-  }
+nav .selected::after {
+  position: absolute;
+  content: '';
+  width: calc(100% - 1em);
+  height: 2px;
+  background-color: rgb(170,30,30);
+  display: block;
+  bottom: -1px;
+}
 
-  nav a {
-    text-decoration: none;
-    padding: 1em 0.5em;
-    display: block;
-  }
-
+nav a {
+  text-decoration: none;
+  padding: 1em 0.5em;
+  display: block;
+}
+*/
 </style>

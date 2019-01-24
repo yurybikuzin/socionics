@@ -1,3 +1,11 @@
+const lookup = new Map();
+
+// description cache turned on
+import descs from './routes/_descs.js'
+descs.forEach(desc => {
+  lookup.set(desc.slug, { status: 200, html: desc.html });
+});
+
 import { timestamp, files, shell, routes } from '../__sapper__/service-worker.js';
 
 const ASSETS = `cache${timestamp}`;
@@ -47,6 +55,10 @@ self.addEventListener('fetch', event => {
 		event.respondWith(caches.match(event.request));
 		return;
 	}
+	console.log(Object.keys(event.request))
+
+	// console.log(url.hostname, self.location.hostname, url.port, self.location.port, url.pathname)
+	// if (url.pathname)
 
 	// for pages, you might want to serve a shell `index.html` file,
 	// which Sapper has generated for you. It's not right for every

@@ -1,0 +1,120 @@
+<table class="a64">
+   <tbody>
+    <tr>
+      <td></td>
+      {#each quadraEnum as quadra}
+        <th>
+          <div class="a66">
+            <div class="a67">квадра</div>
+            {quadra}
+          </div>
+        </th>
+      {/each}
+    </tr>
+    {#each pjEnum as pj}
+    {#each eiEnum as ei}
+    <tr>
+    <td class="a68">
+      <div class="a69">
+        {eiTitle(ei)}<br/>{pjTitle(pj)}
+      </div>
+      <table style="margin-top: 28px">
+        <tbody>
+          <tr>
+            {#each cpEnumOfPjEi(pj, ei) as cp}
+              <td><Icon cp="{cp}" titlePrefix=""/></td>
+            {/each}
+          </tr>
+        </tbody>
+      </table>
+    </td>
+    {#each quadraEnum as quadra}
+      <td class="a65">
+        <ModelAForType tn='{quadraField(quadra, pj, ei, "code")}'/>
+      </td>
+    {/each}
+    </tr>
+    {/each}
+    {/each}
+  </tbody>
+</table>
+
+<script>
+  import {store, url, quadraEnum, pjEnum, pjTitle, eiEnum, eiTitle, quadraField, cpEnumOfPjEi} from '../store.js';
+  export default {
+    store: () => store,
+    data() {
+      return {
+        quadraEnum,
+        pjEnum,
+        eiEnum,
+      };
+    },
+    helpers: {
+      pjTitle,
+      eiTitle,
+      cpEnumOfPjEi,
+      quadraField,
+    },
+    components: {
+      ModelAForType: './ModelAForType.html',
+      Icon: './CpIcon.html'
+    }
+  };
+ </script>
+
+<style>
+/*
+
+MainPackage->c['Модель А для всех типов']
+
+  a64 => ${}
+  a65 => ${ячейка типа}
+  a66 => ${заголовок квадры}
+  a67 => ${слово "квадра"}
+  a68 => ${td}
+  a69 => ${Экстраверты/Интраверты - иррационалы/рационалы}
+
+*/
+
+  .a64 {
+    width: 496px;
+    margin: 14px 2px 2px 18px;
+  }
+
+/*  .a65 {
+    width: 94px;
+    padding: 10px 5px 8px;
+  }
+*/
+/*    .a65 h4, .a65 table {
+      margin-left: 10px;
+      margin-left: 10px;
+    }
+*/
+  .a66 {
+    position: relative;
+    left: 48px;
+    font-size: 17px;
+    margin-bottom: 2px;
+  }
+
+  .a67 {
+    color: inherit;
+    font-size: 10px;
+    position: absolute;
+    left: -36px;
+    top: -2px;
+  }
+
+  .a68 {
+    position: relative;
+    width: 80px;
+  }
+
+  .a69 {
+    position: absolute;
+    font-size: 10px;
+    color: inherit;
+  }
+</style>

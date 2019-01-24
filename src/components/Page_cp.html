@@ -1,53 +1,177 @@
 
-<table>
-  <thead>
-    <colgroup>
-      <col class="group"/>
-      <col class="icon"/>
-      <col class="name"/>
-    </colgroup>
-  </thead>
+<table class="a16">
   <tbody>
-    {#each cpGroups as cpGroup}
-    {#each eiEnum as ei, eiIdx}
     <tr>
-      {#if eiIdx === 0}
-      <td rowspan="2">{cpGroupTitle(cpGroup)}</td>
-      {/if}
-      <td><CognitiveProcessIcon cp='{fld(cpGroup, ei, "code")}'/></td>
-      <td><a
-        class:selected='$cp === fld(cpGroup, ei, "code")'
-        on:click='$set({cp: fld(cpGroup, ei, "code")})'
-        href='{url({cp: fld(cpGroup, ei, "code")})}'
-      >{fld(cpGroup, ei, "title")}</a></td>
+      <td>
+
+        <table class="a17">
+          <colgroup>
+            <col class="a19">
+            <col class="a20">
+            <col class="a21">
+          </colgroup>
+          <tbody>
+            {#each cpGroups as cpGroup}
+            {#each eiEnum as ei, eiIdx}
+            <tr>
+              {#if eiIdx === 0}
+              <td rowspan="2" class="a18">{cpGroupTitle(cpGroup)}</td>
+              {/if}
+              <td
+                class="a24"
+                class:selected='$cp === cpGroupField(cpGroup, ei, "code")'
+                >
+                <CpIcon
+                  cp='{cpGroupField(cpGroup, ei, "code")}'
+                  titlePrefix=""
+                />
+              </td>
+              {#if $cp === cpGroupField(cpGroup, ei, "code")}
+                <td class="a25 selected">{cpGroupField(cpGroup, ei, "title")}</td>
+              {:else}
+                <td
+                  class="a25"
+                ><a
+                  on:click='$set({cp: cpGroupField(cpGroup, ei, "code")})'
+                  href='{url({cp: cpGroupField(cpGroup, ei, "code"), mad: "cp", $page, $tn, $cp, $it, $sex, $mad})}'
+                >{cpGroupField(cpGroup, ei, "title")}</a></td>
+              {/if}
+            </tr>
+            {/each}
+            {/each}
+          </tbody>
+        </table>
+
+      </td>
+      <td>
+        <CpDescription/>
+      </td>
     </tr>
-    {/each}
-    {/each}
   </tbody>
 </table>
 
-<style>
-  .selected { background-color: yellow }
-</style>
-
 <script>
-  import {store, url, eiDef, cpDef} from '../store.js';
+  import {
+    store,
+    url,
+    cpGroups,
+    eiEnum,
+    cpGroupTitle,
+    cpGroupField,
+    // cpTitle,
+  } from '../store.js';
   export default {
     store: () => store,
     data() {
       return {
-        cpGroups: Object.keys(cpDef),
-        eiEnum: Object.keys(eiDef),
+        cpGroups,
+        eiEnum,
       };
     },
     helpers: {
       url,
-      cpGroupTitle: (cpGroup) => cpDef[cpGroup].title,
-      fld: (cpGroup, ei, field) => cpDef[cpGroup][ei][field]
-      // url: ({cp}) => 'cp' + urlQuery({cp}),
+      cpGroupTitle,
+      cpGroupField,
+      // cpTitle,
     },
     components: {
-      CognitiveProcessIcon: './CognitiveProcessIcon.html'
+      CpIcon: './CpIcon.html',
+      CpDescription: './CpDescription.html',
     },
   };
  </script>
+
+ <style>
+/*
+
+MainPackage->c['Вкладка "Соционические функции"']
+
+  a16 => ${}
+
+*/
+
+.a16 {
+  margin: 0px 18px 14px;
+}
+
+/*
+
+MainPackage->c['Таблица соционических функций']
+
+  a17 => ${}
+  a18 => ${Краткое название}
+  a19 => ${col "Краткое название"}
+  a20 => ${col "Значок функции"}
+  a21 => ${col "Название"}
+
+*/
+
+.a17 {
+  margin: 20px 30px 10px 0px;
+  width: 280px;
+}
+
+  .a17 td {
+    padding-top: 4px ;
+    padding-bottom: 4px ;
+  }
+
+.a18 {
+  font-size: 14px;
+  vertical-align: middle;
+  padding-left: 10px;
+}
+
+.a19 {
+  width: 90px;
+}
+
+.a20 {
+}
+
+.a21 {
+  width: 170px;
+}
+
+/*
+
+MainPackage->c['Cоционическая функция в таблице']
+
+  a23 => ${selected}
+  a24 => ${Значок функции}
+  a25 => ${Название}
+
+*/
+
+/*  .a23  {
+    font-weight: bold;
+    color: black;
+    background-color: yellow;
+  }
+*/
+  .a24 {
+    padding: 2px 0 3px 4px;
+  }
+
+  .a25 {
+    padding-left: 8px;
+    padding-right: 4px;
+  }
+
+.selected  {
+  font-weight: bold;
+  color: black;
+  background-color: yellow;
+}
+
+.a24 {
+  padding: 2px 0 3px 4px;
+}
+
+.a25 {
+  padding-left: 8px;
+  padding-right: 4px;
+}
+
+</style>
+

@@ -1,0 +1,190 @@
+{#if $tn || $it || $cp}
+<table
+  class="b1"
+  class:b5="$mad ? false : true"
+  style="min-width: 420px; margin-top: 20px;"
+>
+  <thead>
+    <tr>
+      <td width="1px">
+        {#if $mad}
+        <h1 style="
+          font-size: 16px;
+          font-weight: bold;
+          margin-right: 10px;
+          margin-bottom: 2px;
+          position: relative;
+          top: -2px;
+        ">Описани{$tn && $it || $tn && $cp || $it && $cp ? "я" : "е"}:</h1>
+        {:else}
+        <h1 style="
+          font-size: 16px;
+          font-weight: bold;
+          margin-right: 4px;
+          margin-bottom: 2px;
+        ">Описани{$tn && $it || $tn && $cp || $it && $cp ? "я" : "е"}:</h1>
+        {/if}
+      </td>
+      <td>
+        {#if $tn}
+          {#if $mad == "tn"}
+            <span class="b3 b2">{tnTitle($tn)}</span>
+          {:else}
+            <a
+              class="b2 b4"
+              on:click='$set({mad: "tn"})'
+              href='{url({mad: "tn", $page, $cp, $tn, $it, $sex, $mad})}'
+            >{tnTitle($tn)}</a>
+          {/if}
+        {/if}
+        {#if $cp}
+          {#if $mad == "cp"}
+            <span class="b3 b2">{cpTitle($cp)}</span>
+          {:else}
+            <a
+              class="b2 b4"
+              on:click='$set({mad: "cp"})'
+              href='{url({mad: "cp", $page, $tn, $cp, $it, $sex, $mad})}'
+            >{cpTitle($cp)}</a>
+          {/if}
+        {/if}
+        {#if $it}
+          {#if $mad == "it"}
+            <span class="b3 b2">{itTitle($it)}</span>
+          {:else}
+            <a
+              class="b2 b4"
+              on:click='$set({mad: "it"})'
+              href='{url({mad: "it", $page, $tn, $cp, $it, $sex, $mad})}'
+            >{itTitle($it)}</a>
+          {/if}
+        {/if}
+        {#if $mad}
+          <a
+            class="b6"
+            on:click='$set({mad: null})'
+            href='{url({mad: null, $page, $tn, $cp, $it, $sex, $mad})}'
+          >свернуть</a>
+        {/if}
+      </td>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td colspan="2">
+      {#if $mad === "tn"}
+        <TnDescription/>
+      {/if}
+      {#if $mad === "cp"}
+        <CpDescription/>
+      {/if}
+      {#if $mad === "it"}
+        <ItDescription/>
+      {/if}
+    </td></tr>
+  </tbody>
+</table>
+{/if}
+
+<script>
+  import {store, url, tnTitle, cpTitle, itTitle} from '../store.js';
+  export default {
+    store: () => store,
+    helpers: {
+      url,
+      tnTitle,
+      cpTitle,
+      itTitle,
+    },
+    components: {
+      TnDescription: './TnDescription.html',
+      CpDescription: './CpDescription.html',
+      ItDescription: './ItDescription.html',
+    }
+  };
+</script>
+
+<style>
+thead td {
+  white-space: nowrap;
+}
+
+  /*
+
+CommonPackage->c['collapsable']
+
+  b0 => ${свернуть}
+
+*/
+
+/*  .b0 {
+    vertical-align: super;
+    font-size: 9px;
+    margin-left: 3px;
+    text-decoration: none;
+  }
+*/
+
+/*
+
+CommonPackage->c['PageControl']
+
+  b1 => ${table}
+  b2 => ${tab}
+  b3 => ${selected}
+  b4 => ${to-be-selected}
+  b5 => ${свернуто}
+  b6 => ${свернуть}
+
+*/
+
+  .b1 > thead {
+    height: 20px;
+  }
+
+  .b1 > thead > tr > td {
+    vertical-align: bottom;
+  }
+
+  .b1 > tbody > tr > td {
+    border: 1px solid #DDD;
+    -moz-border-radius: 20px;
+  }
+
+  .b2 {
+    position: relative;
+    top: -4px;
+    padding: 4px 6px;
+    margin-left: -1px;
+    border: 1px solid #DDD;
+    border-bottom: none;
+    -moz-border-radius: 10px 10px 0 0;
+  }
+
+  .b3 {
+    top: -6px;
+    color: black;
+    font-weight: bold;
+    background-color: white;
+    padding-top: 7px;
+    padding-bottom: 7px;
+  }
+
+  .b4 {}
+
+  .b5 > thead > tr > td > a,
+  .b5 > thead > tr > td > span,
+  .b5 > tbody > tr > td
+  {
+    border: none;
+  }
+
+  .b1 > thead > tr > td > a.b6 {
+    position: relative;
+    top: -12px;
+    left: 4px;
+    font-size: 9px;
+    margin-left: 3px;
+    text-decoration: none;
+    border: none;
+  }
+</style>

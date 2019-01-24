@@ -1,0 +1,59 @@
+{#if $it}
+<div class="a60">
+  <h1 class="a61">{itTitle($it)}</h1>
+  {@html desc}
+</div>
+{/if}
+
+<script>
+  import {
+    store,
+    itTitle,
+  } from '../store.js';
+  export default {
+    store: () => store,
+    helpers: {
+      itTitle,
+    },
+    computed: {
+      desc: ({$itDesc}) => $itDesc,
+    },
+  };
+ </script>
+
+ <style>
+/*
+
+MainPackage->c['Описание интертипных отношений']
+
+  a60 => ${}
+  a61 => ${caption}
+  a62 => ${Источник}
+
+*/
+
+
+  .a60 {
+    padding: 0px 40px 5px;
+    margin-top: 10px;
+    min-width: 200px;
+    max-width: 600px;
+    min-height: 100px;
+    color: #555;
+    line-height: 16px;
+    white-space: normal;
+  }
+
+  .a60 :global(p) {
+    margin: 10px 0;
+  }
+
+  .a61 {
+    font-size: 16pt;
+    margin: 18px 0 22px -2px;
+  }
+
+  /*.a62 {}*/
+
+</style>
+

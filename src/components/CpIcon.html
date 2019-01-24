@@ -1,33 +1,32 @@
+{#if $cp === cp}
+<div
+  class="selected icon {cp}"
+  title='{title(titlePrefix, cp)}'
+></div>
+{:else}
 <a
-  class='icon {cp}'
-  title='{titlePrefix}{title(cp)}'
-  href='{url({cp})}'
+  class="icon {cp}"
+  title='{title(titlePrefix, cp)}'
+  on:click='$set({cp})'
+  href='{url({cp, mad: "cp", $page, $tn, $cp, $it, $sex, $mad})}'
 > </a>
+{/if}
 
 <script>
-  import {store, url} from '../store.js';
+  import {store, url, cpTitle} from '../store.js';
   export default {
     store: () => store,
     helpers: {
-      title: (cp) => ({
-        'Ne': 'интуиция возможностей',
-        'Ni': 'интуиция времени',
-        'Se': 'волевая сенсорика',
-        'Si': 'сенсорика ощущений',
-        'Te': 'деловая логика',
-        'Ti': 'структурная логика',
-        'Fe': 'этика эмоций',
-        'Fi': 'этика отношений',
-      }[cp]),
+      title: (titlePrefix, cp) => (
+        (titlePrefix ? titlePrefix : "" ) + cpTitle(cp)
+      ),
       url: ({cp}) => url({cp}),
     },
-    // computed: {
-      // query: ({$cp, $tn, $sex}) => urlQuery({}),
-    // },
   };
 </script>
 
 <style>
+.selected { background-color: yellow }
 .icon {
   display: block;
   height: 15px;

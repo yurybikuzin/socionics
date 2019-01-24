@@ -1,48 +1,237 @@
-<table>
-  <colgroup>
-    <col/>
-    <col/>
-  </colgroup>
-  <tbody>
-    {#each itEnum as it}
-    <tr>
-      {#if $tn}
-      <td>
-        {tnTitle($tn)} - {tnTitle(getItTn(it, $tn)) }
-        <!-- {tnTitle($tn)} - {getItTn(it, $tn)} -->
-      </td>
-      {/if}
-      <td><a
-        class:selected='$it === it'
-        on:click='$set({it})'
-        href='{url({it})}'
-      >{itTitle(it, $tn)}</a></td>
-    </tr>
-    {/each}
-  </tbody>
-</table>
-
-<style>
-  .selected { background-color: yellow }
-</style>
+<div class="a30">
+  <table class="a31">
+    <colgroup>
+      <col class="a32">
+      <col class="a33">
+    </colgroup>
+    <tbody>
+      <tr>
+        <td>
+          <table class="a35">
+            <colgroup>
+              <col class="a36"/>
+              <col class="a38"/>
+            </colgroup>
+            <tbody>
+              {#each itEnum as it, itIdx}
+              <tr>
+                {#if $tn}
+                <td class:a40="it == $it">
+                  <span class="a{42 + itIdx}">{tnTitle($tn)}</span>
+                  -
+                  <span class="a58">{tnTitle(itTn(it, $tn))}</span>
+                </td>
+                {/if}
+                <td class:a40="it == $it">
+                  {#if it == $it}
+                    <span class="a41">{itTitle(it, $tn)}</span>
+                  {:else}
+                    <a
+                      on:click='$set({it, mad: "it"})'
+                      href='{url({it, mad: "it", $page, $tn, $cp, $it, $sex, $mad})}'
+                    >{itTitle(it, $tn)}</a>
+                  {/if}
+                </td>
+              </tr>
+              {/each}
+            </tbody>
+          </table>
+        </td>
+        <td><TnTable/></td>
+      </tr>
+    </tbody>
+  </table>
+  <ItDescription/>
+</div>
 
 <script>
-  import {store, url, itDef, tnDef, getItTn} from '../store.js';
+  import {
+    store,
+    url,
+    itTn,
+    tnTitle,
+    itTitle,
+    itEnum,
+  } from '../store.js';
   export default {
     store: () => store,
     data() {
       return {
-        itEnum: Object.keys(itDef),
+        itEnum,
       };
     },
     helpers: {
-      getItTn,
+      itTn,
       url,
-      itTitle: (it, tn) => typeof itDef[it].title != "function" ? itDef[it].title : itDef[it].title(tn) ,
-      tnTitle: (tn) => tnDef[tn].title,
+      itTitle,
+      tnTitle,
     },
-    // components: {
-    //   'CognitiveProcessIcon': './CognitiveProcessIcon.html'
-    // },
+    components: {
+      TnTable: './TnTable.html',
+      ItDescription: './ItDescription.html',
+    },
   };
  </script>
+
+ <style>
+ /*
+ MainPackage->c['Вкладка "Интертипные отношения"']
+
+  a30 => ${}
+  a31 => ${table}
+  a32 => ${col "Таблица интертипных отношений"}
+  a33 => ${col "Таблица соционических типов"}
+
+*/
+
+  .a30 {
+    margin-bottom: 10px;
+  }
+
+  .a31 {
+    margin: 5px 18px 10px;
+  }
+
+  .a32 {}
+
+  .a33 {}
+
+
+/*
+
+MainPackage->c['Таблица интертипных отношений']
+
+  a35 => ${}
+  a36 => ${col "Соционическая пара"}
+  a37 => ${col "Соционическая пара не задана"}
+  a38 => ${col "Интертипные отношения"}
+  a39 => ${col "Интертипные отношения, соционическая пара не задана"}
+  a40 => ${selected_td}
+  a41 => ${selected_sr}
+  a42 => ${selected_st_0}
+  a43 => ${selected_st_1}
+  a44 => ${selected_st_2}
+  a45 => ${selected_st_3}
+  a46 => ${selected_st_4}
+  a47 => ${selected_st_5}
+  a48 => ${selected_st_6}
+  a49 => ${selected_st_7}
+  a50 => ${selected_st_8}
+  a51 => ${selected_st_9}
+  a52 => ${selected_st_10}
+  a53 => ${selected_st_11}
+  a54 => ${selected_st_12}
+  a55 => ${selected_st_13}
+  a56 => ${selected_st_14}
+  a57 => ${selected_st_15}
+  a58 => ${st}
+
+*/
+
+  .a35 {
+    line-height: 21px;
+    margin-top: 10px;
+    margin-right: 10px;
+  }
+
+    .a35 td {
+      padding-left: 6px;
+    }
+
+  .a36 {
+    width: 172px;
+  }
+
+  .a37 {
+    width: 20px;
+  }
+
+  .a38 {
+    width: 330px;
+  }
+
+  .a39 {
+    width: 220px;
+  }
+
+  .a40 {
+    background-color: yellow;
+  }
+
+  .a41 {
+    color: black;
+    font-weight: bold;
+  }
+
+      .a42 {
+      font-weight: normal;
+      color: #303030;
+    }
+      .a43 {
+      font-weight: normal;
+      color: #8b8b8b;
+    }
+      .a44 {
+      font-weight: normal;
+      color: #9c9c9c;
+    }
+      .a45 {
+      font-weight: normal;
+      color: #a7a7a7;
+    }
+      .a46 {
+      font-weight: normal;
+      color: #aeaeae;
+    }
+      .a47 {
+      font-weight: normal;
+      color: #b4b4b4;
+    }
+      .a48 {
+      font-weight: normal;
+      color: #b8b8b8;
+    }
+      .a49 {
+      font-weight: normal;
+      color: #bcbcbc;
+    }
+      .a50 {
+      font-weight: normal;
+      color: #c0c0c0;
+    }
+      .a51 {
+      font-weight: normal;
+      color: #c3c3c3;
+    }
+      .a52 {
+      font-weight: normal;
+      color: #c5c5c5;
+    }
+      .a53 {
+      font-weight: normal;
+      color: #c8c8c8;
+    }
+      .a54 {
+      font-weight: normal;
+      color: #cacaca;
+    }
+      .a55 {
+      font-weight: normal;
+      color: #cccccc;
+    }
+      .a56 {
+      font-weight: normal;
+      color: #cecece;
+    }
+      .a57 {
+      font-weight: normal;
+      color: #d0d0d0;
+    }
+
+  .a58 {
+    font-weight: normal;
+    color: #333;
+  }
+
+</style>
+

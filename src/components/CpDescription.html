@@ -1,0 +1,57 @@
+{#if $cp}
+<div class="a27">
+  <h1 class="a28">{cpTitle($cp)}</h1>
+  {@html desc}
+  <!-- ... TODO: description ... -->
+</div>
+{/if}
+
+<script>
+  import {
+    store,
+    cpTitle,
+  } from '../store.js';
+  export default {
+    store: () => store,
+    helpers: {
+      cpTitle,
+    },
+    computed: {
+      desc: ({$cpDesc}) => $cpDesc,
+    },
+  };
+ </script>
+
+<style>
+/*
+
+MainPackage->c['Описание соционической функции']
+
+  a27 => ${}
+  a28 => ${caption}
+  a29 => ${Источник}
+
+*/
+
+  .a27 {
+    padding: 0px 40px 5px;
+    margin-top: 10px;
+    min-width: 200px;
+    max-width: 400px;
+    min-height: 100px;
+    color: #555;
+    line-height: 16px;
+    white-space: normal;
+  }
+
+  .a27 :global(p) {
+    margin: 10px 0;
+  }
+
+  .a28 {
+    font-size: 16pt;
+    margin: 18px 0 12px -2px;
+  }
+
+  /*.a29 {}*/
+</style>
