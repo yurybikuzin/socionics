@@ -1,26 +1,199 @@
 
-const lookup = new Map();
-
-// import descs from './routes/_descs.js'
-// descs.forEach(desc => {
-//   lookup.set(desc.slug, { status: 200, html: desc.html });
-// });
-
 import { Store } from 'svelte/store.js';
 
 const clearParams = {cp: null, tn: null, it: null, sex: null, mad: null};
 
 var store = new Store(clearParams)
 
-function initStore({ params, query }) {
-  const { page } = params;
-  let { tn, cp, it, sex, mad } = query;
+function url({
+  $page, $tn, $cp, $it, $mad,
+  page, tn, cp, it, sex, mad,
+}) {
+  let _page = page === null ? null : (page ? page : store._state.page)
+  let _tn = tn === null ? null : (tn ? tn : store._state.tn);
+  let _cp = cp === null ? null : (cp ? cp : store._state.cp);
+  let _it = it === null ? null : (it ? it : store._state.it);
+  let _sex = sex === null ? null : (sex ? sex : store._state.sex);
+  let _mad = mad === null ? null : (mad ? mad : store._state.mad);
+  if (!_page) { _page = 'tn' }
+  if (_sex !== 'female') { _sex = 'male' }
+  // let result = encodeParams({_page, _tn, _cp, _it, _sex, _mad })
+  let result = !_page ? 'tn' : _page + (
+    !_tn && !_cp && _sex == 'male' && !_mad ? "" :
+      "?" + [
+        (!_tn ? "" : "tn=" + _tn),
+        (!_cp ? "" : "cp=" + _cp),
+        (!_it ? "" : "it=" + _it),
+        (_sex == 'male' ? "" : "sex=" + _sex),
+        (!_mad ? "" : "mad=" + _mad),
+      ].filter( _ => _ ).join("&")
+  );
+  // console.log({result})
+  return result;
+}
+
+const pageEnum = [ 'tn', 'cp', 'it', 'ma' ]
+let pageDef = {}
+pageEnum.forEach((page, idx) => {
+  pageDef[page] = { idx }
+})
+
+const madEnum = [ 'tn', 'cp', 'it' ]
+let madDef = {}
+madEnum.forEach((mad, idx) => {
+  madDef[mad] = { idx }
+})
+
+function toBinaryString(idx, sup) { // https://stackoverflow.com/a/5366862
+  let str = idx.toString(2)
+  let padLen = Math.ceil(Math.log2(sup))
+  let pad = ""; for (let i = 0; i < padLen; i++) { pad += '0'}
+  return pad.substring(0, pad.length - str.length) + str;
+}
+
+// const encoding = "_0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ-"
+const flagsLength = 5;
+function binaryStringLen() {
+  return 0 +
+    Math.ceil(Math.log2(pageEnum.length)) +
+    flagsLength +
+    Math.ceil(Math.log2(tnEnum.length)) +
+    Math.ceil(Math.log2(cpEnum.length)) +
+    Math.ceil(Math.log2(itEnum.length)) +
+    Math.ceil(Math.log2(madEnum.length)) +
+  0;
+}
+
+function encodeParams({ _page, _tn, _cp, _it, _sex, _mad }) {
+  let t0 = global.performance ? performance.now() : null;
+  let binaryString = ""
+  binaryString += toBinaryString(pageDef[_page].idx, pageEnum.length)
+
+  binaryString += toBinaryString((_tn ? 1 : 0), 2)
+  binaryString += toBinaryString((_cp ? 1 : 0), 2)
+  binaryString += toBinaryString((_it ? 1 : 0), 2)
+  binaryString += toBinaryString((_sex === "female" ? 1 : 0), 2)
+  binaryString += toBinaryString((_mad ? 1 : 0), 2)
+
+  if (_tn) {
+    binaryString += toBinaryString(tnDef[_tn].idx, tnEnum.length)
+  }
+  if (_cp) {
+    binaryString += toBinaryString(cpDef[_cp].idx, cpEnum.length)
+  }
+  if (_it) {
+    binaryString += toBinaryString(itDef[_it].idx, itEnum.length)
+  }
+  if (_mad) {
+    binaryString += toBinaryString(madDef[_mad].idx, madEnum.length)
+  }
+
+  let t1 = global.performance ? performance.now() : null
+  if (global.performance && t1 - t0 > 0) {
+    // console.log("Call to encodeParams took " + (t1 - t0) + " milliseconds.")
+  }
+  return binaryString.replace(/^(.+?)(0+)$/, '$1');
+}
+
+function flagFromBinaryString(binaryString, ofs) {
+  let flag = binaryString.substr(ofs, 1) == '1'
+  return {ofs: ofs + 1, flag}
+}
+
+function enumFromBinaryString(binaryString, ofs, enumArr) {
+  let valLen = Math.ceil(Math.log2(enumArr.length))
+  let val = binaryString.substr(ofs, valLen)
+  let idx = parseInt(val, 2)
+  return {ofs: ofs + valLen, val: enumArr[idx]}
+}
+
+function decodeParams(from) {
+  let t0 = global.performance ? performance.now() : null;
+  let binaryString = from;
+  let len = binaryStringLen()
+  while (binaryString.length < len) { binaryString += '0'}
+  let ofs = 0, flag, valOfs = 0, ret
+  let page, tn, cp, it, sex, mad;
+  ret = enumFromBinaryString(binaryString, ofs, pageEnum)
+  ofs = ret.ofs
+  page = ret.val
+  let valBinaryString = binaryString.substr(ofs + flagsLength);
+
+  ret = flagFromBinaryString(binaryString, ofs)
+  ofs = ret.ofs
+  if (ret.flag) {
+    ret = enumFromBinaryString(valBinaryString, valOfs, tnEnum)
+    valOfs = ret.ofs
+    tn = ret.val
+  }
+
+  ret = flagFromBinaryString(binaryString, ofs)
+  ofs = ret.ofs
+  if (ret.flag) {
+    ret = enumFromBinaryString(valBinaryString, valOfs, cpEnum)
+    valOfs = ret.ofs
+    cp = ret.val
+  }
+
+  ret = flagFromBinaryString(binaryString, ofs)
+  ofs = ret.ofs
+  if (ret.flag) {
+    ret = enumFromBinaryString(valBinaryString, valOfs, itEnum)
+    valOfs = ret.ofs
+    it = ret.val
+  }
+
+  ret = flagFromBinaryString(binaryString, ofs)
+  ofs = ret.ofs
+  sex = ret.flag ? 'female' : 'male'
+
+  ret = flagFromBinaryString(binaryString, ofs)
+  ofs = ret.ofs
+  if (ret.flag) {
+    ret = enumFromBinaryString(valBinaryString, valOfs, madEnum)
+    valOfs = ret.ofs
+    mad = ret.val
+  }
+  let t1 = global.performance ? performance.now() : null
+  if (global.performance && t1 - t0 > 0) {
+  //   console.log("Call to decodeParams took " + (t1 - t0) + " milliseconds.")
+  }
+  return {page, tn, cp, it, sex, mad}
+}
+
+async function initStore({ params, query }, thisFetch) {
+  // let from
+  // { let { page } = params; from = page }
+  // let {page, tn, cp, it, sex, mad} = decodeParams(from)
+  let {page} = params;
+  let {tn, cp, it, sex, mad} = query;
+
   if (!sex) { sex = 'male' }
-  store.set({ page, tn, cp, it, sex, mad, cache: lookup })
-  onStoreChange({
-    changed: {tn: !!tn, cp: !!cp, it: !!it},
-    current: store.get(),
-  });
+  store.set({ page, tn, cp, it, sex, mad })
+  let slugs = []
+  if (tn) {
+    slugs.push(tn + '-' + sex);
+  }
+  if (cp) {
+    slugs.push(cp)
+  }
+  if (it) {
+    slugs.push(it)
+  }
+  if (slugs.length) {
+    let cache = new Map();
+    for (let i = 0; i < slugs.length; i++) {
+      let slug = slugs[i]
+      const res = await thisFetch(slug + '.json');
+      const data = await res.json()
+      if (res.status === 200) {
+        cache.set(slug, {status: res.status, html: data})
+      } else {
+        cache.set(slug, {status: res.status, html: '<span class="error">' + data.message + '</span>'})
+      }
+      store.set({cache})
+    }
+  }
 }
 
 function onStoreChange(arg) {
@@ -35,50 +208,38 @@ function onStoreChange(arg) {
   if (arg.changed.it && arg.current.it) {
     slugs.push(arg.current.it)
   }
-  slugs.forEach(slug => {
-    let cache = store.get().cache || new Map();
-    if (!(cache.has(slug) && cache.get(slug).status == 200)) {
-      let f = async function() {
-        try {
-          const res = await fetch(slug + '.json');
-          const data = await res.json();
-          if (res.status === 200) {
-            cache.set(slug, {status: res.status, html: data})
-          } else {
-            cache.set(slug, {status: res.status, html: '<span class="error">' + data.message + '</span>'})
+  let cache = store.get().cache || new Map();
+  if (global.fetch === undefined) {
+    const lookup = new Map();
+    descs.forEach(desc => {
+      lookup.set(desc.slug, { status: 200, html: desc.html });
+    });
+    slugs.forEach(slug => {
+      if (lookup.get(slug)) { cache.set(slug, lookup.get(slug)) }
+    });
+    store.set({cache})
+  } else {
+    slugs.forEach(slug => {
+      if (!(cache.has(slug) && cache.get(slug).status == 200)) {
+        let f = async function() {
+          try {
+            // console.log(global.fetch)
+            const res = await fetch(slug + '.json');
+            const data = await res.json();
+            if (res.status === 200) {
+              cache.set(slug, {status: res.status, html: data})
+            } else {
+              cache.set(slug, {status: res.status, html: '<span class="error">' + data.message + '</span>'})
+            }
+          } catch(error) {
+            cache.set(slug, {status: 0, html: error.message})
           }
-        } catch(error) {
-          cache.set(slug, {status: 0, html: error.message})
-        }
-        store.set({cache})
-      };
-      f();
-    }
-  });
-}
-
-function url({
-  $page, $tn, $cp, $it, $mad,
-  page, tn, cp, it, sex, mad,
-}) {
-  let _page = page === null ? null : (page ? page : store._state.page)
-  let _tn = tn === null ? null : (tn ? tn : store._state.tn);
-  let _cp = cp === null ? null : (cp ? cp : store._state.cp);
-  let _it = it === null ? null : (it ? it : store._state.it);
-  let _sex = sex === null ? null : (sex ? sex : store._state.sex);
-  let _mad = mad === null ? null : (mad ? mad : store._state.mad);
-  if (!_sex) { _sex = 'male' }
-  let result = !_page ? 'tn' : _page + (
-    !_tn && !_cp && _sex == 'male' && !_mad ? "" :
-      "?" + [
-        (!_tn ? "" : "tn=" + _tn),
-        (!_cp ? "" : "cp=" + _cp),
-        (!_it ? "" : "it=" + _it),
-        (_sex == 'male' ? "" : "sex=" + _sex),
-        (!_mad ? "" : "mad=" + _mad),
-      ].filter( _ => _ ).join("&")
-  );
-  return result;
+          store.set({cache})
+        };
+        f();
+      }
+    });
+  }
 }
 
 const htmlLoading = '<span>Loading . . .</span>';
@@ -142,42 +303,42 @@ function pjTitle(pj) {
 const quadraDef = {
   'I': {
     'P': {
-      'E': { code: 'ENTP', title: "Дон Кихот" },
-      'I': { code: 'ISFP', title: "Дюма" },
+      'E': { code: 'ENTP', title: "Дон Кихот", idx: 0 },
+      'I': { code: 'ISFP', title: "Дюма", idx: 1 },
     },
     'J': {
-      'E': { code: 'ESFJ', title: 'Гюго' },
-      'I': { code: 'INTJ', title: 'Робеспьер' },
+      'E': { code: 'ESFJ', title: 'Гюго', idx: 2 },
+      'I': { code: 'INTJ', title: 'Робеспьер', idx: 3 },
     },
   },
   'II': {
     'P': {
-      'E': { code: 'ESTP', title: "Жуков" },
-      'I': { code: 'INFP', title: "Есенин" },
+      'E': { code: 'ESTP', title: "Жуков", idx: 4 },
+      'I': { code: 'INFP', title: "Есенин", idx: 5 },
     },
     'J': {
-      'E': { code: 'ENFJ', title: 'Гамлет' },
-      'I': { code: 'ISTJ', title: 'Максим' },
+      'E': { code: 'ENFJ', title: 'Гамлет', idx: 6 },
+      'I': { code: 'ISTJ', title: 'Максим', idx: 7 },
     },
   },
   'III': {
     'P': {
-      'E': { code: 'ESFP', title: "Наполеон" },
-      'I': { code: 'INTP', title: "Бальзак" },
+      'E': { code: 'ESFP', title: "Наполеон", idx: 8 },
+      'I': { code: 'INTP', title: "Бальзак", idx: 9 },
     },
     'J': {
-      'E': { code: 'ENTJ', title: 'Джек' },
-      'I': { code: 'ISFJ', title: 'Драйзер' },
+      'E': { code: 'ENTJ', title: 'Джек', idx: 10 },
+      'I': { code: 'ISFJ', title: 'Драйзер', idx: 11 },
     },
   },
   'IV': {
     'P': {
-      'E': { code: 'ENFP', title: "Гексли" },
-      'I': { code: 'ISTP', title: "Габен" },
+      'E': { code: 'ENFP', title: "Гексли", idx: 12 },
+      'I': { code: 'ISTP', title: "Габен", idx: 13 },
     },
     'J': {
-      'E': { code: 'ESTJ', title: 'Штирлиц' },
-      'I': { code: 'INFJ', title: 'Достоевский' },
+      'E': { code: 'ESTJ', title: 'Штирлиц', idx: 14 },
+      'I': { code: 'INFJ', title: 'Достоевский', idx: 15 },
     },
   },
 };
@@ -191,13 +352,15 @@ function quadraField(quadra, pj, ei, field) {
 // ============================================================================
 
 var tnDef = {};
-Object.values(quadraDef).forEach(quadraDef => {
-  Object.values(quadraDef).forEach(pjDef => {
-    Object.values(pjDef).forEach(eiDef => {
-      tnDef[eiDef.code] = { title: eiDef.title }
+{
+  Object.values(quadraDef).forEach(quadraDef => {
+    Object.values(quadraDef).forEach(pjDef => {
+      Object.values(pjDef).forEach(eiDef => {
+        tnDef[eiDef.code] = { title: eiDef.title, idx: eiDef.idx }
+      })
     })
   })
-})
+}
 const tnEnum = Object.keys(tnDef);
 
 function tnTitle(tn) {
@@ -209,23 +372,23 @@ function tnTitle(tn) {
 const cpGroupDef = {
   'N': {
     'title': 'интуиция',
-    'E': { code: 'Ne', title: 'интуиция возможностей' },
-    'I': { code: 'Ni', title: 'интуиция времени' },
+    'E': { code: 'Ne', title: 'интуиция возможностей', idx: 0 },
+    'I': { code: 'Ni', title: 'интуиция времени', idx: 1 },
   },
   'F': {
     'title': 'этика',
-    'E': {code: 'Fe', title: 'этика эмоций'},
-    'I': {code: 'Fi', title: 'этика отношений'},
+    'E': {code: 'Fe', title: 'этика эмоций', idx: 2},
+    'I': {code: 'Fi', title: 'этика отношений', idx: 3},
   },
   'T': {
     'title': 'логика',
-    'E': {code: 'Te', title: 'деловая логика'},
-    'I': {code: 'Ti', title: 'структурная логика'},
+    'E': {code: 'Te', title: 'деловая логика', idx: 4},
+    'I': {code: 'Ti', title: 'структурная логика', idx: 5},
   },
   'S': {
     'title': 'сенсорика',
-    'E': {code: 'Se', title: 'волевая сенсорика'},
-    'I': {code: 'Si', title: 'сенсорика ощущений'},
+    'E': {code: 'Se', title: 'волевая сенсорика', idx: 6},
+    'I': {code: 'Si', title: 'сенсорика ощущений', idx: 7},
   },
 };
 
@@ -242,11 +405,15 @@ function cpGroupField(cpGroup, ei, field) {
 // ============================================================================
 
 var cpDef = {}
-Object.values(cpGroupDef).forEach(cpGroupDef => {
-  Object.values(cpGroupDef).forEach(eiDef => {
-    cpDef[eiDef.code] = { title: eiDef.title }
+{
+  Object.values(cpGroupDef).forEach(cpGroupDef => {
+      Object.values(cpGroupDef).forEach(eiDef => {
+        if (typeof eiDef == "object") {
+          cpDef[eiDef.code] = { title: eiDef.title, idx: eiDef.idx }
+        }
+      })
   })
-})
+}
 const cpEnum = Object.keys(cpDef);
 
 function cpTitle(cp) {
@@ -322,6 +489,9 @@ const itDef = {
   },
 }
 const itEnum = Object.keys(itDef);
+itEnum.forEach((it, idx) => {
+  itDef[it]['idx'] = idx
+})
 
 function itTitle(it, tn) {
   return typeof itDef[it].title != "function" ?

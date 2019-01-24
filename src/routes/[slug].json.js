@@ -1,6 +1,7 @@
-import descs from './_descs.js'
 
 const lookup = new Map();
+
+import descs from './_descs.js'
 descs.forEach(desc => {
   lookup.set(desc.slug, JSON.stringify(desc.html));
 });

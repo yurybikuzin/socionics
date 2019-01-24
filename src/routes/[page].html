@@ -46,7 +46,7 @@
     'ma': { title: 'Модель А для всех типов', component: Page_ma },
   };
   import {store, initStore, clearParams, url, onStoreChange} from '../store.js';
-  let listener;
+  // let listener;
   export default {
     data() {
       return {
@@ -61,13 +61,17 @@
       pageComponent: (page) => pages[page].component,
     },
     store: () => store,
-    preload({ params, query }) {
-      initStore({params, query})
+    async preload({ params, query }) {
+      // console.log("PRELOAD")
+      // console.log(this.fetch)
+      await initStore({params, query}, this.fetch)
     },
     computed: {
       hasSelection: ({ $cp, $tn, $it }) => $cp || $tn || $it,
     },
     oncreate() {
+      // console.log('oncreate')
+      // console.log(this.fetch)
       const listener = this.store.on('state', (arg) => {
         onStoreChange(arg)
       });

@@ -1,7 +1,10 @@
 <script>
+  import {url} from '../store.js';
   export default {
     preload({ params, query }) {
-    	return this.redirect(302, 'tn')
+      const redirectUrl = url({page: 'tn'})
+      console.log({redirectUrl})
+    	return this.redirect(302, redirectUrl)
     },
   };
 </script>
