@@ -5,6 +5,143 @@ const clearParams = {cp: null, tn: null, it: null, sex: null, mad: null};
 
 var store = new Store(clearParams)
 
+// const pageEnum = [ 'tn', 'cp', 'it', 'ma' ]
+// let pageDef = {}
+// pageEnum.forEach((page, idx) => {
+//   pageDef[page] = { idx }
+// })
+
+// const madEnum = [ 'tn', 'cp', 'it' ]
+// let madDef = {}
+// madEnum.forEach((mad, idx) => {
+//   madDef[mad] = { idx }
+// })
+
+// function toBinaryString(idx, sup) { // https://stackoverflow.com/a/5366862
+//   let str = idx.toString(2)
+//   let padLen = Math.ceil(Math.log2(sup))
+//   let pad = ""; for (let i = 0; i < padLen; i++) { pad += '0'}
+//   return pad.substring(0, pad.length - str.length) + str;
+// }
+
+// // const encoding = "_0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ-"
+// const flagsLength = 5;
+// function binaryStringLen() {
+//   return 0 +
+//     Math.ceil(Math.log2(pageEnum.length)) +
+//     flagsLength +
+//     Math.ceil(Math.log2(tnEnum.length)) +
+//     Math.ceil(Math.log2(cpEnum.length)) +
+//     Math.ceil(Math.log2(itEnum.length)) +
+//     Math.ceil(Math.log2(madEnum.length)) +
+//   0;
+// }
+
+// function encodeParams({ _page, _tn, _cp, _it, _sex, _mad }) {
+//   let t0 = global.performance ? performance.now() : null;
+//   let binaryString = ""
+//   binaryString += toBinaryString(pageDef[_page].idx, pageEnum.length)
+
+//   binaryString += toBinaryString((_tn ? 1 : 0), 2)
+//   binaryString += toBinaryString((_cp ? 1 : 0), 2)
+//   binaryString += toBinaryString((_it ? 1 : 0), 2)
+//   binaryString += toBinaryString((_sex === "female" ? 1 : 0), 2)
+//   binaryString += toBinaryString((_mad ? 1 : 0), 2)
+
+//   if (_tn) {
+//     binaryString += toBinaryString(tnDef[_tn].idx, tnEnum.length)
+//   }
+//   if (_cp) {
+//     binaryString += toBinaryString(cpDef[_cp].idx, cpEnum.length)
+//   }
+//   if (_it) {
+//     binaryString += toBinaryString(itDef[_it].idx, itEnum.length)
+//   }
+//   if (_mad) {
+//     binaryString += toBinaryString(madDef[_mad].idx, madEnum.length)
+//   }
+
+//   let t1 = global.performance ? performance.now() : null
+//   if (global.performance && t1 - t0 > 0) {
+//     // console.log("Call to encodeParams took " + (t1 - t0) + " milliseconds.")
+//   }
+//   return binaryString.replace(/^(.+?)(0+)$/, '$1');
+// }
+
+// function flagFromBinaryString(binaryString, ofs) {
+//   let flag = binaryString.substr(ofs, 1) == '1'
+//   return {ofs: ofs + 1, flag}
+// }
+
+// function enumFromBinaryString(binaryString, ofs, enumArr) {
+//   let valLen = Math.ceil(Math.log2(enumArr.length))
+//   let val = binaryString.substr(ofs, valLen)
+//   let idx = parseInt(val, 2)
+//   return {ofs: ofs + valLen, val: enumArr[idx]}
+// }
+
+// function decodeParams(from) {
+//   let t0 = global.performance ? performance.now() : null;
+//   let binaryString = from;
+//   let len = binaryStringLen()
+//   while (binaryString.length < len) { binaryString += '0'}
+//   let ofs = 0, flag, valOfs = 0, ret
+//   let page, tn, cp, it, sex, mad;
+//   ret = enumFromBinaryString(binaryString, ofs, pageEnum)
+//   ofs = ret.ofs
+//   page = ret.val
+//   let valBinaryString = binaryString.substr(ofs + flagsLength);
+
+//   ret = flagFromBinaryString(binaryString, ofs)
+//   ofs = ret.ofs
+//   if (ret.flag) {
+//     ret = enumFromBinaryString(valBinaryString, valOfs, tnEnum)
+//     valOfs = ret.ofs
+//     tn = ret.val
+//   }
+
+//   ret = flagFromBinaryString(binaryString, ofs)
+//   ofs = ret.ofs
+//   if (ret.flag) {
+//     ret = enumFromBinaryString(valBinaryString, valOfs, cpEnum)
+//     valOfs = ret.ofs
+//     cp = ret.val
+//   }
+
+//   ret = flagFromBinaryString(binaryString, ofs)
+//   ofs = ret.ofs
+//   if (ret.flag) {
+//     ret = enumFromBinaryString(valBinaryString, valOfs, itEnum)
+//     valOfs = ret.ofs
+//     it = ret.val
+//   }
+
+//   ret = flagFromBinaryString(binaryString, ofs)
+//   ofs = ret.ofs
+//   sex = ret.flag ? 'female' : 'male'
+
+//   ret = flagFromBinaryString(binaryString, ofs)
+//   ofs = ret.ofs
+//   if (ret.flag) {
+//     ret = enumFromBinaryString(valBinaryString, valOfs, madEnum)
+//     valOfs = ret.ofs
+//     mad = ret.val
+//   }
+//   let t1 = global.performance ? performance.now() : null
+//   if (global.performance && t1 - t0 > 0) {
+//   //   console.log("Call to decodeParams took " + (t1 - t0) + " milliseconds.")
+//   }
+//   return {page, tn, cp, it, sex, mad}
+// }
+
+function itId(it) {
+  return itDef[it].idx
+}
+
+function itFromId(id) {
+  return itEnum[id]
+}
+
 function url({
   $page, $tn, $cp, $it, $mad,
   page, tn, cp, it, sex, mad,
@@ -23,7 +160,7 @@ function url({
       "?" + [
         (!_tn ? "" : "tn=" + _tn),
         (!_cp ? "" : "cp=" + _cp),
-        (!_it ? "" : "it=" + _it),
+        (!_it ? "" : "it=" + itId(_it)),
         (_sex == 'male' ? "" : "sex=" + _sex),
         (!_mad ? "" : "mad=" + _mad),
       ].filter( _ => _ ).join("&")
@@ -32,141 +169,13 @@ function url({
   return result;
 }
 
-const pageEnum = [ 'tn', 'cp', 'it', 'ma' ]
-let pageDef = {}
-pageEnum.forEach((page, idx) => {
-  pageDef[page] = { idx }
-})
-
-const madEnum = [ 'tn', 'cp', 'it' ]
-let madDef = {}
-madEnum.forEach((mad, idx) => {
-  madDef[mad] = { idx }
-})
-
-function toBinaryString(idx, sup) { // https://stackoverflow.com/a/5366862
-  let str = idx.toString(2)
-  let padLen = Math.ceil(Math.log2(sup))
-  let pad = ""; for (let i = 0; i < padLen; i++) { pad += '0'}
-  return pad.substring(0, pad.length - str.length) + str;
-}
-
-// const encoding = "_0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ-"
-const flagsLength = 5;
-function binaryStringLen() {
-  return 0 +
-    Math.ceil(Math.log2(pageEnum.length)) +
-    flagsLength +
-    Math.ceil(Math.log2(tnEnum.length)) +
-    Math.ceil(Math.log2(cpEnum.length)) +
-    Math.ceil(Math.log2(itEnum.length)) +
-    Math.ceil(Math.log2(madEnum.length)) +
-  0;
-}
-
-function encodeParams({ _page, _tn, _cp, _it, _sex, _mad }) {
-  let t0 = global.performance ? performance.now() : null;
-  let binaryString = ""
-  binaryString += toBinaryString(pageDef[_page].idx, pageEnum.length)
-
-  binaryString += toBinaryString((_tn ? 1 : 0), 2)
-  binaryString += toBinaryString((_cp ? 1 : 0), 2)
-  binaryString += toBinaryString((_it ? 1 : 0), 2)
-  binaryString += toBinaryString((_sex === "female" ? 1 : 0), 2)
-  binaryString += toBinaryString((_mad ? 1 : 0), 2)
-
-  if (_tn) {
-    binaryString += toBinaryString(tnDef[_tn].idx, tnEnum.length)
-  }
-  if (_cp) {
-    binaryString += toBinaryString(cpDef[_cp].idx, cpEnum.length)
-  }
-  if (_it) {
-    binaryString += toBinaryString(itDef[_it].idx, itEnum.length)
-  }
-  if (_mad) {
-    binaryString += toBinaryString(madDef[_mad].idx, madEnum.length)
-  }
-
-  let t1 = global.performance ? performance.now() : null
-  if (global.performance && t1 - t0 > 0) {
-    // console.log("Call to encodeParams took " + (t1 - t0) + " milliseconds.")
-  }
-  return binaryString.replace(/^(.+?)(0+)$/, '$1');
-}
-
-function flagFromBinaryString(binaryString, ofs) {
-  let flag = binaryString.substr(ofs, 1) == '1'
-  return {ofs: ofs + 1, flag}
-}
-
-function enumFromBinaryString(binaryString, ofs, enumArr) {
-  let valLen = Math.ceil(Math.log2(enumArr.length))
-  let val = binaryString.substr(ofs, valLen)
-  let idx = parseInt(val, 2)
-  return {ofs: ofs + valLen, val: enumArr[idx]}
-}
-
-function decodeParams(from) {
-  let t0 = global.performance ? performance.now() : null;
-  let binaryString = from;
-  let len = binaryStringLen()
-  while (binaryString.length < len) { binaryString += '0'}
-  let ofs = 0, flag, valOfs = 0, ret
-  let page, tn, cp, it, sex, mad;
-  ret = enumFromBinaryString(binaryString, ofs, pageEnum)
-  ofs = ret.ofs
-  page = ret.val
-  let valBinaryString = binaryString.substr(ofs + flagsLength);
-
-  ret = flagFromBinaryString(binaryString, ofs)
-  ofs = ret.ofs
-  if (ret.flag) {
-    ret = enumFromBinaryString(valBinaryString, valOfs, tnEnum)
-    valOfs = ret.ofs
-    tn = ret.val
-  }
-
-  ret = flagFromBinaryString(binaryString, ofs)
-  ofs = ret.ofs
-  if (ret.flag) {
-    ret = enumFromBinaryString(valBinaryString, valOfs, cpEnum)
-    valOfs = ret.ofs
-    cp = ret.val
-  }
-
-  ret = flagFromBinaryString(binaryString, ofs)
-  ofs = ret.ofs
-  if (ret.flag) {
-    ret = enumFromBinaryString(valBinaryString, valOfs, itEnum)
-    valOfs = ret.ofs
-    it = ret.val
-  }
-
-  ret = flagFromBinaryString(binaryString, ofs)
-  ofs = ret.ofs
-  sex = ret.flag ? 'female' : 'male'
-
-  ret = flagFromBinaryString(binaryString, ofs)
-  ofs = ret.ofs
-  if (ret.flag) {
-    ret = enumFromBinaryString(valBinaryString, valOfs, madEnum)
-    valOfs = ret.ofs
-    mad = ret.val
-  }
-  let t1 = global.performance ? performance.now() : null
-  if (global.performance && t1 - t0 > 0) {
-  //   console.log("Call to decodeParams took " + (t1 - t0) + " milliseconds.")
-  }
-  return {page, tn, cp, it, sex, mad}
-}
-
 async function initStore({ params, query }, thisFetch) {
   // let from
   // { let { page } = params; from = page }
   // let {page, tn, cp, it, sex, mad} = decodeParams(from)
   let {page} = params;
-  let {tn, cp, it, sex, mad} = query;
+  let {tn, cp, id, sex, mad} = query;
+  let it = itFromId(id)
 
   if (!sex) { sex = 'male' }
   store.set({ page, tn, cp, it, sex, mad })
@@ -181,15 +190,18 @@ async function initStore({ params, query }, thisFetch) {
     slugs.push(it)
   }
   if (slugs.length) {
-    let cache = new Map();
+    // let cache = new Map();
+    let cache = {}
     for (let i = 0; i < slugs.length; i++) {
       let slug = slugs[i]
       const res = await thisFetch(slug + '.json');
       const data = await res.json()
       if (res.status === 200) {
-        cache.set(slug, {status: res.status, html: data})
+        cache[slug] = {status: res.status, html: data}
+        // cache.set(slug, {status: res.status, html: data})
       } else {
-        cache.set(slug, {status: res.status, html: '<span class="error">' + data.message + '</span>'})
+        cache[slug] = {status: res.status, html: '<span class="error">' + data.message + '</span>'};
+        // cache.set(slug, {status: res.status, html: '<span class="error">' + data.message + '</span>'})
       }
       store.set({cache})
     }
@@ -208,38 +220,43 @@ function onStoreChange(arg) {
   if (arg.changed.it && arg.current.it) {
     slugs.push(arg.current.it)
   }
-  let cache = store.get().cache || new Map();
-  if (global.fetch === undefined) {
-    const lookup = new Map();
-    descs.forEach(desc => {
-      lookup.set(desc.slug, { status: 200, html: desc.html });
-    });
+  let cache = store.get().cache || {};
+  // if (global.fetch === undefined) {
+  //   const lookup = new Map();
+  //   descs.forEach(desc => {
+  //     lookup.set(desc.slug, { status: 200, html: desc.html });
+  //   });
+  //   slugs.forEach(slug => {
+  //     if (lookup.get(slug)) { cache.set(slug, lookup.get(slug)) }
+  //   });
+  //   store.set({cache})
+  // } else {
     slugs.forEach(slug => {
-      if (lookup.get(slug)) { cache.set(slug, lookup.get(slug)) }
-    });
-    store.set({cache})
-  } else {
-    slugs.forEach(slug => {
-      if (!(cache.has(slug) && cache.get(slug).status == 200)) {
+      if (!(cache[slug] && cache[slug].status == 200)) {
+        console.log({slug})
+        if (cache[slug]) console.log({status: cache[slug].status})
         let f = async function() {
           try {
             // console.log(global.fetch)
             const res = await fetch(slug + '.json');
             const data = await res.json();
             if (res.status === 200) {
-              cache.set(slug, {status: res.status, html: data})
+              cache[slug] = {status: res.status, html: data}
+              // cache.set(slug, {status: res.status, html: data})
             } else {
-              cache.set(slug, {status: res.status, html: '<span class="error">' + data.message + '</span>'})
+              // cache.set(slug, {status: res.status, html: '<span class="error">' + data.message + '</span>'})
+              cache[slug] = {status: res.status, html: '<span class="error">' + data.message + '</span>'}
             }
           } catch(error) {
-            cache.set(slug, {status: 0, html: error.message})
+            cache[slug] = {status: 0, html: error.message}
+            // cache.set(slug, {status: 0, html: error.message})
           }
           store.set({cache})
         };
         f();
       }
     });
-  }
+  // }
 }
 
 const htmlLoading = '<span>Loading . . .</span>';
@@ -249,7 +266,11 @@ store.compute(
   ['tn', 'sex', 'cache'],
   (tn, sex, cache) => {
     const slug = tn + '-' + sex;
-    const result = tn && sex && cache && cache.has(slug) ? cache.get(slug).html : htmlLoading;
+    const result = tn && sex && cache &&
+    // cache.has(slug) ? cache.get(slug).html :
+      cache[slug] ? cache[slug].html :
+      htmlLoading
+    ;
     return result
   }
 );
@@ -259,7 +280,11 @@ store.compute(
   ['cp', 'cache'],
   (cp, cache) => {
     const slug = cp;
-    const result = cp && cache && cache.has(slug) ? cache.get(slug).html : htmlLoading;
+    const result = cp && cache &&
+      // cache.has(slug) ? cache.get(slug).html :
+      cache[slug] ? cache[slug].html :
+      htmlLoading
+    ;
     return result
   }
 );
@@ -269,7 +294,11 @@ store.compute(
   ['it', 'cache'],
   (it, cache) => {
     const slug = it;
-    const result = it && cache && cache.has(slug) ? cache.get(slug).html : htmlLoading;
+    const result = it && cache &&
+      // cache.has(slug) ? cache.get(slug).html :
+      cache[slug] ? cache[slug].html :
+      htmlLoading
+    ;
     return result
   }
 );
